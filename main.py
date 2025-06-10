@@ -1,14 +1,26 @@
 # para rodar o servidor usar :  uvicorn main:app --reload
+#entrar no .venv: source .venv/Scripts/activate
 
 from fastapi import FastAPI
+from passlib.context import CryptContext
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+secret_key = os.getenv("SECRET_KEY")
+algorithm = os.getenv("ALGORITHM")
+acess_token_expire_minutes = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 app = FastAPI()
+
+
+bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 from auth_routes import auth_router
 from order_rourtes import order_router
 
-app.include_router(auth_router)
+app.include_router(auth_router) 
 app.include_router(order_router)
 
 
