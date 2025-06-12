@@ -1,3 +1,7 @@
+# para rodar o servidor usar :  uvicorn main:app --reload
+#entrar no .venv: source .venv/Scripts/activate
+
+
 from fastapi import FastAPI
 from passlib.context import CryptContext
 from dotenv import load_dotenv
