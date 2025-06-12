@@ -2,9 +2,9 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional
 
 class Credenciais(BaseModel):
+    nome: str
     email: EmailStr
     senha: str
-    nome: str
     data_nascimento: str
     is_admin: Optional[bool] = False
 

@@ -15,8 +15,8 @@ class User(base):
     __tablename__ = "user"
 
     id = Column("id", Integer,primary_key= True, autoincrement=True)
-    nome = Column("nome", String(50))
-    email = Column("email", String(50),nullable=False)
+    nome = Column("nome", String(200))
+    email = Column("email", String(200),nullable=False)
     senha = Column("senha", String(50))
     data_nascimento = Column("data_nascimento", Date)
     is_admin = Column("is_admin", Boolean, default=False)
