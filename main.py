@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
 import os
 
 load_dotenv()
@@ -16,6 +17,7 @@ acess_token_expire_minutes = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 app = FastAPI()
 
+oauth2_schema = OAuth2PasswordBearer(tokenUrl='auth/login')
 
 origins = [
     "http://localhost:3000",

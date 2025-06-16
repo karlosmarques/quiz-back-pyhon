@@ -1,7 +1,7 @@
 from main import secret_key, algorithm 
 from fastapi import APIRouter, Depends, HTTPException
 from models import User
-from dependencies import pegar_sesao
+from dependencies import pegar_sesao, verificartokem
 from main import bcrypt_context
 from schemas import Credenciais,loginSchema
 from jose import jwt, JWTError
@@ -16,6 +16,7 @@ def criar_token(id, email, is_admin):
     disc_info ={"id":id, "email": email, "is_admin": is_admin, "exp": data_expiração}
     jwt_decodificado = jwt.encode(disc_info,key=secret_key, algorithm=algorithm)
     return jwt_decodificado
+
 
 def autenticar_usuario(email, senha, session):
     user  = session.query(User).filter(User.email == email).first()
@@ -47,12 +48,17 @@ async def resgistro_usuario(credenciais: Credenciais, session= Depends(pegar_ses
     
 
 @auth_router.post('/login')
-async def login_usuario(login: loginSchema,session=Depends(pegar_sesao)):
+async def login_usuario(login: loginSchema,session =Depends(pegar_sesao)):
     user = autenticar_usuario(login.email, login.senha, session)
     if not user:
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     else:
         access_token = criar_token(id=user.id, email=user.email, is_admin=user.is_admin)
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {"access_token": access_token}
+    
+    
+
+    
+    
 
 

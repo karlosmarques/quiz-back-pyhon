@@ -18,7 +18,7 @@ class loginSchema(BaseModel):
     class Config:
         from_attributes = True
 
-class Quizdados(BaseModel):
+class Quiztitulo(BaseModel):
     titulo: str
     criado_por: int
 
