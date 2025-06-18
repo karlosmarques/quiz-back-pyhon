@@ -24,3 +24,16 @@ class Quiztitulo(BaseModel):
 
     class config:
         from_attributes = True
+        
+class QuizPerguntas(BaseModel):
+    quiz_id: str
+    texto: str
+    
+    class config:
+        from_attributes = True
+            
+    
+class Quizalternativas(BaseModel):
+    question_id: str
+    texto: str
+    correta: bool
