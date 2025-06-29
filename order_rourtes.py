@@ -53,7 +53,7 @@ async def  criar_alternativas(quizallternativas: Quizalternativas, session = Dep
      else:
          raise HTTPException(status_code=401, detail = "Erro ao criar pergunta")
      
-@order_router.post("/quizzes/cancelar/{id}")
+@order_router.post("/quizzes/deletar/{id}")
 async def cancelar_quiz(id:int, session = Depends(pegar_sesao),usuario:User = Depends (verificartokem)):
     quizzes_delete = session.query(Quizzes).filter(Quizzes.id==id).first()
     if not quizzes_delete:
