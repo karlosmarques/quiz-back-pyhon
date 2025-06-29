@@ -52,3 +52,14 @@ async def  criar_alternativas(quizallternativas: Quizalternativas, session = Dep
          raise HTTPException(status_code=201, detail="enviado com sucesso")
      else:
          raise HTTPException(status_code=401, detail = "Erro ao criar pergunta")
+     
+@order_router.post("/quizzes/cancelar/{id}")
+async def cancelar_quiz(id:int, session = Depends(pegar_sesao),usuario:User = Depends (verificartokem)):
+    quizzes_delete = session.query(Quizzes).filter(Quizzes.id==id).first()
+    if not quizzes_delete:
+          raise HTTPException(status_code=400, detail="Quiz não encontrado")
+    if not usuario.is_admin:
+                raise HTTPException (status_code=401, detail="você não é adm para poder fazer isso!")
+    session.delete(quizzes_delete)
+    session.commit()
+    return {"detail": f"Quiz com ID {id} foi apagado com sucesso!"}
