@@ -41,7 +41,7 @@ async def resgistro_usuario(credenciais: Credenciais, session= Depends(pegar_ses
         raise HTTPException(status_code=400, detail="Email já cadastrado")
     else:
         senha_hash = bcrypt_context.hash(credenciais.senha)
-        novo_usuario = User(credenciais.nome, credenciais.email, senha_hash, credenciais.data_nascimento, credenciais.is_admin)
+        novo_usuario = User(credenciais.nome, credenciais.email, senha_hash,credenciais.is_admin)
         session.add(novo_usuario)
         session.commit()
         return HTTPException(status_code=201, detail=f"Usuário cadastrado com sucesso! {novo_usuario.email}")
@@ -54,7 +54,7 @@ async def login_usuario(login: loginSchema,session =Depends(pegar_sesao)):
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     else:
         access_token = criar_token(id=user.id, email=user.email, is_admin=user.is_admin)
-        return {"access_token": access_token}
+        return {"token": access_token}
     
     
 
