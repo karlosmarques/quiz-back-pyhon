@@ -63,3 +63,17 @@ async def cancelar_quiz(id:int, session = Depends(pegar_sesao),usuario:User = De
     session.delete(quizzes_delete)
     session.commit()
     return {"detail": f"Quiz com ID {id} foi apagado com sucesso!"}
+
+order_router.get("/quizzes/{id}")
+async def pegar_quizzes(id:int,session = Depends(pegar_sesao)):
+     quizzes = session.query(Quizzes).filter(Quizzes.id == id).first()
+     if not quizzes:
+        raise HTTPException(status_code=404, detail="Quiz não encontrado")
+     return quizzes
+
+order_router.get("/quizzes")
+async def pegar_quizzes(id:int,session = Depends(pegar_sesao)):
+     quizzes = session.query(Quizzes).filter(Quizzes.id == id).first()
+     if not quizzes:
+        raise HTTPException(status_code=404, detail="Quiz não encontrado")
+     return quizzes
