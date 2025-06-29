@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from  schemas import Quiztitulo,QuizPerguntas, Quizalternativas
 from dependencies import pegar_sesao, verificartokem
 from models import Quizzes,User,Questions,Answers
+from sqlalchemy.orm import joinedload
 
 
 
@@ -9,9 +10,7 @@ from models import Quizzes,User,Questions,Answers
 order_router = APIRouter(prefix="/quizes", tags=["quizes"])
 
 
-@order_router.get('/')
-async def get_quizes():
-    return {"mensagem":"lista de quizes"}
+
 
 @order_router.post('/quizzes')
 async def criar_quiz(quizdados: Quiztitulo, session = Depends(pegar_sesao),usuario:User = Depends(verificartokem)):
@@ -28,7 +27,7 @@ async def criar_quiz(quizdados: Quiztitulo, session = Depends(pegar_sesao),usuar
          raise HTTPException(status_code=401, detail = "Erro ao criar o quiz!")
        
 @order_router.post('/questions')
-async def criar_perguntas(quizperguntas: Quiztitulo, session = Depends(pegar_sesao), usuario:User = Depends(verificartokem)):
+async def criar_perguntas(quizperguntas: QuizPerguntas, session = Depends(pegar_sesao), usuario:User = Depends(verificartokem)):
     quizperguntas_novo = Questions(texto=quizperguntas.texto)
     p = session.query(Questions).filter_by(texto = quizperguntas.texto).first()
     if not p:
@@ -54,7 +53,7 @@ async def  criar_alternativas(quizallternativas: Quizalternativas, session = Dep
          raise HTTPException(status_code=401, detail = "Erro ao criar pergunta")
      
 @order_router.post("/quizzes/deletar/{id}")
-async def cancelar_quiz(id:int, session = Depends(pegar_sesao),usuario:User = Depends (verificartokem)):
+async def deletar_quiz(id:int, session = Depends(pegar_sesao),usuario:User = Depends (verificartokem)):
     quizzes_delete = session.query(Quizzes).filter(Quizzes.id==id).first()
     if not quizzes_delete:
           raise HTTPException(status_code=400, detail="Quiz não encontrado")
@@ -64,16 +63,16 @@ async def cancelar_quiz(id:int, session = Depends(pegar_sesao),usuario:User = De
     session.commit()
     return {"detail": f"Quiz com ID {id} foi apagado com sucesso!"}
 
-order_router.get("/quizzes/{id}")
+@order_router.get("/quizzes/{id}")
 async def pegar_quizzes(id:int,session = Depends(pegar_sesao)):
-     quizzes = session.query(Quizzes).filter(Quizzes.id == id).first()
+     quizzes = session.query(Quizzes).options(joinedload(Quizzes.questions).joinedload(Questions.answers)).filter(Quizzes.id ==id).first()
      if not quizzes:
         raise HTTPException(status_code=404, detail="Quiz não encontrado")
      return quizzes
 
-order_router.get("/quizzes")
-async def pegar_quizzes(id:int,session = Depends(pegar_sesao)):
-     quizzes = session.query(Quizzes).filter(Quizzes.id == id).first()
+@order_router.get("/listaquiz")
+async def pegar_quizzes(session = Depends(pegar_sesao)):
+     quizzes = session.query(Quizzes).options(joinedload(Quizzes.questions).joinedload(Questions.answers)).all()
      if not quizzes:
         raise HTTPException(status_code=404, detail="Quiz não encontrado")
      return quizzes
