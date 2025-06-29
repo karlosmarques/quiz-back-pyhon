@@ -18,9 +18,7 @@ class User(base):
     nome = Column("nome", String(200))
     email = Column("email", String(200),nullable=False)
     senha = Column("senha", String(50))
-    data_nascimento = Column("data_nascimento", Date)
     is_admin = Column("is_admin", Boolean, default=False)
-
     quizzes = relationship('Quizzes', back_populates='user', cascade='all, delete-orphan')
     respostas = relationship('Respostas_usuarios', back_populates='user', cascade='all, delete-orphan')
 
