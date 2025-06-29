@@ -1,5 +1,6 @@
 # para rodar o servidor usar :  uvicorn main:app --reload
 #entrar no .venv: source .venv/Scripts/activate
+# pip install -r requirements.txt
 
 
 from fastapi import FastAPI
@@ -20,7 +21,7 @@ app = FastAPI()
 oauth2_schema = OAuth2PasswordBearer(tokenUrl='auth/login')
 
 origins = [
-    "http://localhost:3000",
+    "http://localhost:4200",
 ]
 
 app.add_middleware(
