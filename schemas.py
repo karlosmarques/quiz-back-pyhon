@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from typing import List
 
 class Credenciais(BaseModel):
     nome: str
@@ -17,23 +18,27 @@ class loginSchema(BaseModel):
 
     class Config:
         from_attributes = True
+        
+    
+class Quizalternativas(BaseModel):
+    question_id: int
+    texto: str
+    correta: bool
+
+class QuizPerguntas(BaseModel):
+    quiz_id: int
+    texto: str
+    alternativas: list[Quizalternativas]
+    
+    class config:
+        from_attributes = True
+
 
 class Quiztitulo(BaseModel):
     titulo: str
     criado_por: int
+    perguntas: list[QuizPerguntas]
+
 
     class config:
         from_attributes = True
-        
-class QuizPerguntas(BaseModel):
-    quiz_id: str
-    texto: str
-    
-    class config:
-        from_attributes = True
-            
-    
-class Quizalternativas(BaseModel):
-    question_id: str
-    texto: str
-    correta: bool
