@@ -1,44 +1,42 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
-from typing import List
+from typing import Optional, List
 
 class Credenciais(BaseModel):
     nome: str
     email: EmailStr
     senha: str
-    data_nascimento: str
     is_admin: Optional[bool] = False
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 class loginSchema(BaseModel):
     email: EmailStr
     senha: str
 
     class Config:
-        from_attributes = True
-        
-    
+        orm_mode = True
+
 class Quizalternativas(BaseModel):
     question_id: int
     texto: str
     correta: bool
 
+    class Config:
+        orm_mode = True
+
 class QuizPerguntas(BaseModel):
     quiz_id: int
     texto: str
-    alternativas: list[Quizalternativas]
-    
-    class config:
-        from_attributes = True
+    alternativas: List[Quizalternativas]
 
+    class Config:
+        orm_mode = True
 
 class Quiztitulo(BaseModel):
     titulo: str
     criado_por: int
-    perguntas: list[QuizPerguntas]
+    perguntas: List[QuizPerguntas]
 
-
-    class config:
-        from_attributes = True
+    class Config:
+        orm_mode = True
