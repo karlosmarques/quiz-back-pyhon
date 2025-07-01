@@ -1,9 +1,7 @@
 
 from sqlalchemy import create_engine, Column, Integer, String,DateTime , Boolean, ForeignKey, Index, Text,Float
 from sqlalchemy.orm import declarative_base, relationship
-
-
-
+from datetime import datetime
 
 
 db = create_engine("mysql+mysqlconnector://root:karlos24601830@localhost/quiz")
