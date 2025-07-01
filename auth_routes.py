@@ -54,7 +54,8 @@ async def login_usuario(login: loginSchema,session =Depends(pegar_sesao)):
         raise HTTPException(status_code=404, detail="Usuário não encontrado")
     else:
         access_token = criar_token(id=user.id, email=user.email, is_admin=user.is_admin)
-        return {"token": access_token}
+        return {"id": user.id,"role": "ADMIN" if user.is_admin else "USER","token": access_token
+    }
     
     
 
