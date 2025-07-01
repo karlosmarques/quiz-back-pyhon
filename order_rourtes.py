@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
-from  schemas import Quiztitulo,QuizPerguntas, Quizalternativas,ResponderQuizSchema
+from  schemas import Quiztitulo,QuizPerguntas, Quizalternativas
 from dependencies import pegar_sesao, verificartokem
-from models import Quizzes,User,Questions,Answers,Respostas_usuarios
-from sqlalchemy.orm import joinedload,Session
+from models import Quizzes,User,Questions,Answers
+from sqlalchemy.orm import joinedload
 
 
 
@@ -92,32 +92,3 @@ async def exibe_usuario(usuario: User = Depends(verificartokem)):
     }
 
 
-@order_router.post('/responder-quiz')
-async def responder_quiz(
-    resposta: ResponderQuizSchema,
-    session: Session = Depends(pegar_sesao),
-    usuario: User = Depends(verificartokem)
-):
-    if not resposta.quiz_id or resposta.score is None:
-        raise HTTPException(status_code=400, detail="quiz_id e score são obrigatórios")
-
-    try:
-        nova_resposta = Respostas_usuarios(
-            quiz_id=resposta.quiz_id,
-            user_id=usuario.id,
-            score=resposta.score
-        )
-
-        session.add(nova_resposta)
-        session.commit()
-        session.refresh(nova_resposta)
-
-        return {"message": "Pontuação salva com sucesso", "respostaUsuario": {
-            "id": nova_resposta.id,
-            "quiz_id": nova_resposta.quiz_id,
-            "user_id": nova_resposta.user_id,
-            "score": nova_resposta.score
-        }}
-    except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Erro ao salvar pontuação")
