@@ -8,14 +8,13 @@ class Credenciais(BaseModel):
     is_admin: Optional[bool] = False
 
     class Config:
-        orm_mode = True
-
+        from_attributes = True
 class loginSchema(BaseModel):
     email: EmailStr
     senha: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Quizalternativas(BaseModel):
     question_id: int
@@ -23,7 +22,7 @@ class Quizalternativas(BaseModel):
     correta: bool
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class QuizPerguntas(BaseModel):
     quiz_id: int
@@ -31,7 +30,7 @@ class QuizPerguntas(BaseModel):
     alternativas: List[Quizalternativas]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class Quiztitulo(BaseModel):
     titulo: str
@@ -39,4 +38,4 @@ class Quiztitulo(BaseModel):
     perguntas: List[QuizPerguntas]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
