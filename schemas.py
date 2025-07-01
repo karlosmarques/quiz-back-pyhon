@@ -38,4 +38,4 @@ class Quiztitulo(BaseModel):
     perguntas: List[QuizPerguntas]
 
     class Config:
-        orm_mode = True
+        from_attributes = True
