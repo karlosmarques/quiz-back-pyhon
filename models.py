@@ -1,6 +1,6 @@
-
-from sqlalchemy import create_engine, Column, Integer, String, Date, Boolean, ForeignKey, Index, Text,Float
+from sqlalchemy import create_engine, Column, Integer, String,DateTime ,DATETIME, Boolean, ForeignKey, Index, Text,Float
 from sqlalchemy.orm import declarative_base, relationship
+from datetime import datetime
 
 
 
@@ -95,20 +95,41 @@ class Respostas_usuarios(base):
     __tablename__ = 'respostas_usuarios'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    quiz_id = Column(Integer, ForeignKey('quizzes.id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
+    quiz_id = Column(Integer, ForeignKey('quizzes.id', ondelete='CASCADE', onupdate='CASCADE'), nullable=False)
     score = Column(Float, nullable=False)
+    createdAt = Column(DateTime(timezone=True), default=datetime.utcnow)
 
     user = relationship('User', back_populates='respostas')
     quiz = relationship('Quizzes', back_populates='respostas')
+    itens = relationship('RespostaUsuarioItem', back_populates='resposta_usuario', cascade='all, delete-orphan')
 
     __table_args__ = (
-        Index('ix_respostas_usuarios_user_id', 'user_id'),
-        Index('ix_respostas_usuarios_quiz_id', 'quiz_id'),
+        Index('respostas_usuarios_user_id_idx', 'user_id'),
+        Index('respostas_usuarios_quiz_id_idx', 'quiz_id'),
     )
 
     def __init__(self, user_id, quiz_id, score):
         self.user_id = user_id
         self.quiz_id = quiz_id
         self.score = score
-        
+
+
+
+class RespostaUsuarioItem(base):
+    __tablename__ = 'resposta_usuario_item'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    resposta_usuario_id = Column(Integer, ForeignKey('respostas_usuarios.id', ondelete='CASCADE'), nullable=False)
+    question_id = Column(Integer, ForeignKey('questions.id', ondelete='CASCADE'), nullable=False)
+    answer_id = Column(Integer, ForeignKey('answers.id', ondelete='CASCADE'), nullable=False)
+
+    resposta_usuario = relationship('Respostas_usuarios', back_populates='itens')
+    question = relationship('Questions')
+    answer = relationship('Answers')
+
+    __table_args__ = (
+        Index('ix_resposta_usuario_item_resposta_usuario_id', 'resposta_usuario_id'),
+        Index('ix_resposta_usuario_item_question_id', 'question_id'),
+        Index('ix_resposta_usuario_item_answer_id', 'answer_id'),
+    )
