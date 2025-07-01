@@ -1,6 +1,7 @@
-from sqlalchemy import create_engine, Column, Integer, String,DateTime ,DATETIME, Boolean, ForeignKey, Index, Text,Float
+
+from sqlalchemy import create_engine, Column, Integer, String,DateTime , Boolean, ForeignKey, Index, Text,Float
 from sqlalchemy.orm import declarative_base, relationship
-from datetime import datetime
+
 
 
 
@@ -133,3 +134,6 @@ class RespostaUsuarioItem(base):
         Index('ix_resposta_usuario_item_question_id', 'question_id'),
         Index('ix_resposta_usuario_item_answer_id', 'answer_id'),
     )
+
+
+
