@@ -40,3 +40,20 @@ class Quiztitulo(BaseModel):
 
     class Config:
         orm_mode = True
+
+class usuário(BaseModel):
+    userID:int
+    nome:str
+    email:EmailStr
+
+    class Config:
+        orm_mode= True
+
+
+
+class ResponderQuizSchema(BaseModel):
+    quiz_id: int
+    score: float
+
+    class Config:
+        orm_mode= True
