@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr,Field
 from typing import Optional, List
 
 class Credenciais(BaseModel):
@@ -17,25 +17,21 @@ class loginSchema(BaseModel):
         from_attributes = True
 
 class Quizalternativas(BaseModel):
-    question_id: int
     texto: str
     correta: bool
 
-    class Config:
-        from_attributes = True
-
 class QuizPerguntas(BaseModel):
-    quiz_id: int
     texto: str
-    alternativas: List[Quizalternativas]
-
-    class Config:
-        from_attributes = True
+    opcoes: List[Quizalternativas]
 
 class Quiztitulo(BaseModel):
     titulo: str
-    criado_por: int
     perguntas: List[QuizPerguntas]
 
-    class Config:
-        from_attributes = True
+class RespostaItem(BaseModel):
+    question_id: int
+    answer_id: int
+
+class ResponderQuizSchema(BaseModel):
+    quiz_id: int
+    respostas: List[RespostaItem]
