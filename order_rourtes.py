@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from  schemas import Quiztitulo,ResponderQuizSchema
+from  schemas import Quiztitulo,ResponderQuizSchema,PerguntaAtualizar
 from dependencies import pegar_sesao, verificartokem
 from models import Quizzes,User,Questions,Answers,Respostas_usuarios,RespostaUsuarioItem
 from sqlalchemy.orm import joinedload, Session
@@ -130,5 +130,33 @@ async def responder_quiz(resposta: ResponderQuizSchema,session: Session = Depend
     except Exception as e:
         print("[ERRO AO REGISTRAR RESPOSTAS]", e)
         raise HTTPException(status_code=500, detail="Erro ao registrar respostas")
+    
+
+@order_router.put("/questions/{id}")
+async def atualizar_pergunta(id: int,dados: PerguntaAtualizar,session: Session = Depends(pegar_sesao),usuario=Depends(verificartokem)):
+    if not usuario.is_admin:
+        raise HTTPException(status_code=401, detail="Acesso não autorizado")
+    pergunta = session.query(Questions).filter(Questions.id == id).first()
+    if not pergunta:
+        raise HTTPException(status_code=404, detail="Pergunta não encontrada")
+    pergunta.texto = dados.texto
+    session.commit()
+
+    for resposta in dados.answers:
+        if resposta.id:
+            alternativa = session.query(Answers).filter(Answers.id == resposta.id, Answers.question_id == id).first()
+            if alternativa:
+                alternativa.texto = resposta.texto
+                alternativa.correta = resposta.correta
+        else:
+            nova = Answers(
+                texto=resposta.texto,
+                correta=resposta.correta,
+                question_id=id
+            )
+            session.add(nova)
+    session.commit()
+    return {"detail": f"Pergunta {id} atualizada com sucesso"}
+
 
 
