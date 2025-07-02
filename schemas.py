@@ -18,7 +18,7 @@ class loginSchema(BaseModel):
 
 class Quizalternativas(BaseModel):
     texto: str
-    
+
     class Config:
         from_attributes = True
 
@@ -49,3 +49,12 @@ class ResponderQuizSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class RespostaAtualizar(BaseModel):
+    id: int 
+    texto: str
+    correta: bool
+
+class PerguntaAtualizar(BaseModel):
+    texto: str
+    answers: List[RespostaAtualizar]
