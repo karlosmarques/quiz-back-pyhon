@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from  schemas import Quiztitulo,QuizPerguntas, Quizalternativas,ResponderQuizSchema
+from  schemas import Quiztitulo,ResponderQuizSchema
 from dependencies import pegar_sesao, verificartokem
 from models import Quizzes,User,Questions,Answers,Respostas_usuarios,RespostaUsuarioItem
 from sqlalchemy.orm import joinedload, Session
@@ -9,14 +9,16 @@ from sqlalchemy.orm import joinedload, Session
 
 order_router = APIRouter(prefix="/quizes", tags=["quizes"])
 
-
+@order_router.get('/usuario') 
+async def exibe_usuario(usuario: User = Depends(verificartokem)):
+    if not usuario:
+        raise HTTPException(status_code=404, detail="Usuário não encontrado")
+    return usuario
 
 @order_router.post('/quizzes')
 async def criar_quiz_completo(quizdados: Quiztitulo,session=Depends(pegar_sesao),usuario: User = Depends(verificartokem)):
     if not usuario.is_admin:
         raise HTTPException(status_code=401, detail="Você não é adm para poder fazer isso!")
-
-    # Criação do quiz
     novo_quiz = Quizzes(titulo=quizdados.titulo, criado_por=usuario.id)
     session.add(novo_quiz)
     session.commit()
@@ -29,7 +31,7 @@ async def criar_quiz_completo(quizdados: Quiztitulo,session=Depends(pegar_sesao)
         session.refresh(nova_pergunta)
 
         for opcao in pergunta.opcoes:
-            nova_alternativa = Answers(texto=opcao.texto,correta=opcao.correta,question_id=nova_pergunta.id)
+            nova_alternativa = Answers(texto=opcao.texto,question_id=nova_pergunta.id)
             session.add(nova_alternativa)
     session.commit()
     return {novo_quiz.id}
@@ -51,6 +53,7 @@ async def pegar_quizzes(id:int,session = Depends(pegar_sesao)):
      if not quizzes:
         raise HTTPException(status_code=404, detail="Quiz não encontrado")
      return quizzes
+         
 
 @order_router.get("/listaquiz")
 async def pegar_quizzes(session = Depends(pegar_sesao)):
@@ -58,14 +61,7 @@ async def pegar_quizzes(session = Depends(pegar_sesao)):
      if not quizzes:
         raise HTTPException(status_code=404, detail="Quiz não encontrado")
      return quizzes
-
-
-@order_router.get('/usuario') 
-async def exibe_usuario(usuario: User = Depends(verificartokem)):
-    if not usuario:
-        raise HTTPException(status_code=404, detail="Usuário não encontrado")
-    return usuario
-       
+         
 @order_router.post('/responder-quiz')
 async def responder_quiz(resposta: ResponderQuizSchema,session: Session = Depends(pegar_sesao),usuario: User = Depends(verificartokem)):
     if not resposta.quiz_id or not resposta.respostas:
